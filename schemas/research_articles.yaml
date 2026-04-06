@@ -1,0 +1,58 @@
+# ============================================================
+# Collection Schema: research_articles
+# 用于存储 arXiv / 学术论文的分块 RAG 知识库
+# ============================================================
+
+collection: research_articles
+
+# ------ Chunker ------
+# 按 Markdown 标题层级分块（推荐用于结构化论文）
+chunker: heading
+chunker_config:
+  max_chunk_size: 1500        # 单个 chunk 最大字符数
+  min_chunk_size: 80          # 小于此长度的节忽略
+  inherit_parent_headings: true  # 在 metadata 中记录完整标题路径
+  include_heading_in_text: true  # chunk text 中包含标题行
+
+# ------ Embedder ------
+embedder:
+  provider: ollama            # 可换为 openai
+  model: bge-m3               # 需提前 ollama pull bge-m3
+
+# ------ Qdrant ------
+distance: Cosine
+
+# ------ Metadata Fields ------
+# 每个 chunk 会自动携带 source_file / filename / collection 字段
+# 以下为额外的自定义字段
+metadata_fields:
+  - name: heading_path        # 完整标题路径，如 "Introduction > Background"
+    type: string
+    source: heading_path      # 由 HeadingChunker 自动填充
+
+  - name: heading             # 当前节标题（最后一级）
+    type: string
+    source: heading_path      # 由 chunker 填充的 metadata["heading"] 字段
+    # 注意：heading 和 heading_path 由 HeadingChunker 自动写入 chunk.metadata
+    # 此处 source: heading_path 会提取 chunk.metadata["heading_path"]
+
+  - name: paper_id            # 论文 ID（从文件名提取）
+    type: string
+    source: filename          # 取文件名（不含扩展名）
+
+  - name: figure_id           # 图片编号（从文本中提取）
+    type: string
+    source: regex
+    pattern: "Figure\\s+(\\d+)"
+    default: null             # 没有图片时为 null
+
+  - name: table_id            # 表格编号
+    type: string
+    source: regex
+    pattern: "Table\\s+(\\d+)"
+    default: null
+
+  - name: tags                # 从 frontmatter 提取的标签
+    type: list
+    source: frontmatter
+    default: []

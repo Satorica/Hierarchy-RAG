@@ -1,0 +1,44 @@
+# ============================================================
+# Collection Schema: personal_notes
+# 用于存储个人笔记、Obsidian 文档等叙述性内容
+# ============================================================
+
+collection: personal_notes
+
+# ------ Chunker ------
+# 段落级分块，适合叙述性笔记
+chunker: paragraph
+chunker_config:
+  min_paragraph_size: 60     # 小于此字符的段落会与下一段合并
+  max_chunk_size: 1000       # 超长段落会按句子切割
+  merge_short: true
+
+# ------ Embedder ------
+embedder:
+  provider: ollama
+  model: bge-m3
+
+# ------ Qdrant ------
+distance: Cosine
+
+# ------ Metadata Fields ------
+metadata_fields:
+  - name: title             # 从 frontmatter 提取笔记标题
+    type: string
+    source: frontmatter
+    default: ""
+
+  - name: tags              # 标签列表
+    type: list
+    source: frontmatter
+    default: []
+
+  - name: created           # 创建日期
+    type: string
+    source: frontmatter
+    default: null
+
+  - name: source_url        # 原始链接
+    type: string
+    source: frontmatter
+    default: null

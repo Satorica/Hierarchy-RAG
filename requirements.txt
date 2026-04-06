@@ -1,0 +1,26 @@
+# ============================================================
+# Hierarchy-RAG Dependencies
+# Python 3.11+
+# ============================================================
+
+# ------ MCP Server ------
+mcp>=1.0.0               # Model Context Protocol SDK
+uvicorn>=0.27.0          # ASGI server (SSE mode)
+starlette>=0.36.0        # HTTP framework (SSE mode)
+
+# ------ Vector Store ------
+qdrant-client>=1.7.0
+
+# ------ Embedding ------
+requests>=2.31.0         # OllamaEmbedder (HTTP calls)
+# openai>=1.12.0         # Uncomment if using OpenAIEmbedder
+
+# ------ Schema / Config ------
+pyyaml>=6.0.0
+
+# ------ PDF Parsing (optional, choose one) ------
+# pymupdf>=1.23.0        # PyMuPDFParser — lightweight, no conda needed
+# mineru is installed in a separate conda env, not listed here
+
+# ------ Utilities ------
+# No additional runtime deps needed beyond the above
