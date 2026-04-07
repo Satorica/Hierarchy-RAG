@@ -1,1 +1,51 @@
 claude.md
+
+# ── Secrets / API keys ────────────────────────────────────────
+.env
+.env.*
+*.env
+config.local.yaml
+secrets.yaml
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Virtual envs (if created locally) ────────────────────────
+.venv/
+venv/
+env/
+
+# ── Test / temp outputs ───────────────────────────────────────
+*_parsed/
+examples/sample_pdf/*.md
+examples/sample_pdf/*_parsed/
+examples/sample_md/*_out/
+
+# ── Qdrant local data ─────────────────────────────────────────
+qdrant_storage/
+.qdrant/
+
+# ── OS / Editor ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+examples/sample_md/*.md
+*.pdf

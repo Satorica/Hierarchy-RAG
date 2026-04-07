@@ -135,6 +135,9 @@ class MetadataExtractor:
             if not field_def.pattern:
                 return None
             match = re.search(field_def.pattern, chunk_text)
+            # bool 类型：只需判断是否匹配，不需要提取具体内容
+            if field_def.type == "bool":
+                return match is not None
             if match:
                 # 返回第一个捕获组，没有捕获组时返回整个匹配
                 return match.group(1) if match.lastindex else match.group(0)

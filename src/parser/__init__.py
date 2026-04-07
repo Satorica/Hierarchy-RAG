@@ -2,8 +2,9 @@
 Parser 模块。
 
 内置 PDF 解析器：
-    mineru   → MineruParser（调用本地 MinerU conda 环境，推荐）
-    pymupdf  → PyMuPDFParser（纯 Python，无需 conda，适合简单 PDF）
+    mineru_cloud → MineruCloudParser（调用 MinerU Cloud API，推荐，需 MINERU_API_TOKEN）
+    mineru       → MineruParser（调用本地 MinerU conda 环境）
+    pymupdf      → PyMuPDFParser（纯 Python，无需 conda，适合简单 PDF）
 
 也可通过完整模块路径加载自定义解析器：
     my_pkg.my_mod.MyParser
@@ -16,9 +17,11 @@ from typing import Any
 
 from .base import BasePDFParser, ParseResult
 from .mineru import MineruParser
+from .mineru_cloud import MineruCloudParser
 from .pymupdf import PyMuPDFParser
 
 BUILTIN_PARSERS: dict[str, type[BasePDFParser]] = {
+    "mineru_cloud": MineruCloudParser,
     "mineru": MineruParser,
     "pymupdf": PyMuPDFParser,
 }
@@ -58,6 +61,7 @@ def load_parser(provider: str = "mineru", config: dict[str, Any] | None = None) 
 __all__ = [
     "BasePDFParser",
     "ParseResult",
+    "MineruCloudParser",
     "MineruParser",
     "PyMuPDFParser",
     "load_parser",

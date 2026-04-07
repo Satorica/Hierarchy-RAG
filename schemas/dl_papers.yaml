@@ -1,0 +1,85 @@
+# ============================================================
+# Collection Schema: dl_papers
+# 深度学习 / NLP 领域学术论文知识库
+# ============================================================
+
+collection: dl_papers
+
+# ------ Chunker ──────────────────────────────────────────────
+# 按 Markdown 标题层级分块（章节级别）
+chunker: heading
+chunker_config:
+  max_chunk_size: 1500      # 单节最大字符数，超出则按段落二次切割
+  min_chunk_size: 80        # 小于此字符数的节跳过（如空节、仅标题）
+  inherit_parent_headings: true   # metadata 中保留完整标题路径
+  include_heading_in_text: true   # chunk text 中包含标题行本身
+
+# ------ Embedder ─────────────────────────────────────────────
+embedder:
+  provider: ollama
+  model: bge-m3             # 中英文双语，1024 维
+
+# ------ Qdrant ───────────────────────────────────────────────
+distance: Cosine
+
+# ------ Metadata Fields ──────────────────────────────────────
+# 框架自动写入：source_file, filename, collection
+# 以下为业务自定义字段
+
+metadata_fields:
+
+  # ── 文档级别（每篇论文固定，通过 extra_metadata 在 ingest 时传入）──
+
+  - name: topic
+    type: string
+    source: static
+    value: "transformer,attention,NLP"   # ingest 时通过 extra_metadata 覆盖
+
+  - name: owner
+    type: string
+    source: static
+    value: "chen"                         # ingest 时通过 extra_metadata 覆盖
+
+  - name: published_year
+    type: int
+    source: static
+    value: 2017                           # ingest 时通过 extra_metadata 覆盖
+
+  - name: venue
+    type: string
+    source: static
+    value: "NeurIPS"                      # ingest 时通过 extra_metadata 覆盖
+
+  - name: arxiv_id
+    type: string
+    source: static
+    value: "1706.03762"                   # ingest 时通过 extra_metadata 覆盖
+
+  - name: paper_title
+    type: string
+    source: static
+    value: "Attention Is All You Need"    # ingest 时通过 extra_metadata 覆盖
+
+  # ── chunk 级别（自动从当前 chunk 内容中提取）──────────────────────
+
+  - name: heading_path             # 完整标题路径，如 "3. Model > 3.2 Attention"
+    type: string
+    source: heading_path
+
+  - name: section_number           # 章节编号，如 "3.2"（从标题文本提取）
+    type: string
+    source: regex
+    pattern: "^(\\d+(?:\\.\\d+)*)[\\.\\s]"
+    default: null
+
+  - name: has_formula              # chunk 中是否含数学公式（$...$ 或 $$...$$）
+    type: bool
+    source: regex
+    pattern: "\\$[^$]+\\$|\\$\\$[\\s\\S]+?\\$\\$"
+    default: false
+
+  - name: has_table                # chunk 中是否含 Markdown 表格
+    type: bool
+    source: regex
+    pattern: "\\|.+\\|"
+    default: false

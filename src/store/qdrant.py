@@ -218,9 +218,9 @@ class QdrantStore:
             ]
             qdrant_filter = m.Filter(must=conditions)  # type: ignore[arg-type]
 
-        results = self._client.search(  # type: ignore[attr-defined]
+        response = self._client.query_points(  # type: ignore[attr-defined]
             collection_name=collection,
-            query_vector=query_vector,
+            query=query_vector,
             limit=top_k,
             score_threshold=score_threshold,
             query_filter=qdrant_filter,
@@ -229,12 +229,12 @@ class QdrantStore:
 
         return [
             {
-                "text": hit.payload.get("text", ""),  # type: ignore[union-attr]
-                "score": hit.score,  # type: ignore[union-attr]
-                "metadata": {k: v for k, v in hit.payload.items() if k != "text"},  # type: ignore[union-attr]
-                "id": str(hit.id),  # type: ignore[union-attr]
+                "text": hit.payload.get("text", ""),
+                "score": hit.score,
+                "metadata": {k: v for k, v in hit.payload.items() if k != "text"},
+                "id": str(hit.id),
             }
-            for hit in results
+            for hit in response.points
         ]
 
     def delete_by_source(self, collection: str, source_file: str) -> int:
